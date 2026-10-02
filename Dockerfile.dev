@@ -1,0 +1,13 @@
+FROM maven:3.9.11-eclipse-temurin-17 AS build
+
+WORKDIR /workspace
+
+# Copiar archivos de configuración y resolver dependencias
+COPY pom.xml ./
+RUN mvn dependency:go-offline -B
+
+# Copiar código fuente
+COPY src ./src
+
+# Comando por defecto para iniciar en modo desarrollo
+CMD ["mvn", "spring-boot:run"]
