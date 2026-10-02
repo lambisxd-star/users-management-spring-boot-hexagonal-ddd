@@ -11,7 +11,7 @@ class DatabaseConfigTest {
   private static final String DATABASE = "crud_usuarios";
   private static final String USERNAME = "avnadmin";
   private static final String PASSWORD = "secret";
-  private static final String SSL_MODE = "REQUIRED";
+  private static final String SSL_MODE = "require";
 
   @Test
   void shouldBuildJdbcUrlWithConfiguredSslMode() {
@@ -25,7 +25,6 @@ class DatabaseConfigTest {
     // Assert
     assertThat(jdbcUrl)
         .isEqualTo(
-            "jdbc:mysql://mysql.example.com:15425/crud_usuarios"
-                + "?sslMode=REQUIRED&serverTimezone=UTC&allowPublicKeyRetrieval=true");
+            "jdbc:postgresql://mysql.example.com:15425/crud_usuarios?sslmode=require");
   }
 }
