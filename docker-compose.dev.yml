@@ -1,15 +1,14 @@
 services:
-  mysql:
-    image: mysql:8.4
+  postgres:
+    image: postgres:15
     environment:
-      MYSQL_DATABASE: crud_usuarios
-      MYSQL_USER: users_app
-      MYSQL_PASSWORD: local_users_password
-      MYSQL_ROOT_PASSWORD: local_root_password
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: local_postgres_password
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql-data-dev:/var/lib/mysql
+      - postgres-data-dev:/var/lib/postgresql/data
       - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
     restart: unless-stopped
 
@@ -20,12 +19,12 @@ services:
     image: users-management-api-dev:local
     environment:
       PORT: "8080"
-      DB_HOST: mysql
-      DB_PORT: "3306"
-      DB_NAME: crud_usuarios
-      DB_USERNAME: users_app
-      DB_PASSWORD: local_users_password
-      DB_SSL_MODE: DISABLED
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-postgres}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-local_postgres_password}
+      DB_SSL_MODE: ${DB_SSL_MODE:-disable}
       SMTP_HOST: smtp.gmail.com
       SMTP_PORT: "587"
       SMTP_USERNAME: ${SMTP_USERNAME:-}
@@ -34,13 +33,11 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      # Montar el código fuente para hot-reloading (si lo soporta)
       - ./src:/workspace/src
       - ~/.m2:/root/.m2
     depends_on:
-      - mysql
+      - postgres
     restart: unless-stopped
 
-
 volumes:
-  mysql-data-dev:
+  postgres-data-dev:
