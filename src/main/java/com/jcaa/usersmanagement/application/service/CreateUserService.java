@@ -37,7 +37,12 @@ public class CreateUserService implements CreateUserUseCase {
     final UserModel userToSave = UserApplicationMapper.fromCreateCommandToModel(command);
     final UserModel savedUser = saveUserPort.save(userToSave);
 
-    emailNotificationService.notifyUserCreated(savedUser, command.password());
+    try {
+      emailNotificationService.notifyUserCreated(savedUser, command.password());
+    } catch (final Exception exception) {
+      log.warn("No se pudo enviar correo de bienvenida al usuario {}: {}",
+          savedUser.getEmail().value(), exception.getMessage());
+    }
 
     return savedUser;
   }
